@@ -1,6 +1,23 @@
-import { printLine } from './modules/print';
+import { getConfig } from '../../configs/util';
+import { getCurrentPage } from '../../utils/page';
+import { initFilterComment } from '../../utils/comment';
+import debug from '../../utils/debug';
 
-console.log('Content script works!');
-console.log('Must reload extension for modifications to take effect.');
+debug('init start');
+// 1. read config
+const config = getConfig();
+const { mutedUsers } = config;
+// 2. get current page
+const currentPage = getCurrentPage();
+// 3. handle
+switch (currentPage) {
+  case 'detail':
+    // if detail, handle comments list
+    initFilterComment({
+      mutedUsers: mutedUsers,
+    });
 
-printLine('Using a function from the Print Module');
+    break;
+  default:
+    break;
+}

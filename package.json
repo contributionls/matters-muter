@@ -1,7 +1,7 @@
 {
-  "name": "chrome-extension-boilerplate-react",
-  "version": "2.1.0",
-  "description": "A chrome extension boilerplate built with React 16 and Webpack 4",
+  "name": "matters-muter",
+  "version": "0.0.1",
+  "description": "A chrome extension for muting unfriendly accounts on matters",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -14,9 +14,18 @@
   },
   "dependencies": {
     "@hot-loader/react-dom": "^16.9.0",
+    "@material-ui/core": "^4.6.0",
+    "debug": "^4.1.1",
+    "jquery": "^3.4.1",
+    "js-md5": "^0.7.3",
+    "lodash": "^4.17.15",
+    "loglevel": "^1.6.4",
+    "loglevel-message-prefix": "^3.0.0",
+    "loglevel-plugin-prefix": "^0.8.4",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
-    "react-hot-loader": "^4.12.14"
+    "react-hot-loader": "^4.12.14",
+    "react-router-dom": "^5.1.2"
   },
   "devDependencies": {
     "@babel/core": "^7.1.5",

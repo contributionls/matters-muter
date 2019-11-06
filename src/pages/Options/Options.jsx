@@ -1,9 +1,15 @@
 import React, { Component } from 'react';
 import './Options.css';
-
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Home from './home';
 class Options extends Component {
   render() {
-    return <div className="OptionsContainer">Options Page</div>;
+    return (
+      <React.Fragment>
+        <CssBaseline />
+        <Home />
+      </React.Fragment>
+    );
   }
 }
 
