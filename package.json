@@ -22,6 +22,7 @@
     "loglevel": "^1.6.4",
     "loglevel-message-prefix": "^3.0.0",
     "loglevel-plugin-prefix": "^0.8.4",
+    "material-ui-chip-input": "^2.0.0-beta.1",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
     "react-hot-loader": "^4.12.14",

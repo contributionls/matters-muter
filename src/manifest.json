@@ -1,5 +1,5 @@
 {
-  "name": "Matters-眼不见为干净",
+  "name": "Matters-消音器",
   "permissions": ["*://127.0.0.1/*", "*://matters.news/*", "activeTab", "tabs"],
   "options_page": "options.html",
   "background": {
