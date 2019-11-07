@@ -16,6 +16,7 @@ import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
 import Mute from './Mute';
 import General from './General';
+import Put from './Put';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -131,7 +132,7 @@ export default function Home() {
                       <About />
                     </Route>
                     <Route path="/put">
-                      <Dashboard />
+                      <Put />
                     </Route>
                   </Switch>
                 </Grid>
@@ -148,14 +149,6 @@ function About() {
   return (
     <div>
       <h2>About</h2>
-    </div>
-  );
-}
-
-function Dashboard() {
-  return (
-    <div>
-      <h2>Dashboard</h2>
     </div>
   );
 }

@@ -27,10 +27,13 @@ export default function Home() {
   const classes = useStyles();
   const [loading, setLoading] = React.useState(true);
   const [syncSettings, setSyncSettings] = React.useState(true);
+  const [enabled, setEnabled] = React.useState(true);
+
   const userStorage = new UserStorage();
   useEffect(() => {
     userStorage.get().then((config) => {
       setSyncSettings(config.syncSettings);
+      setEnabled(config.enabled);
       setLoading(false);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -39,13 +42,16 @@ export default function Home() {
   const handleSyncSettings = (e, value) => {
     setSyncSettings(value);
   };
-
+  const handleEnabled = (e, value) => {
+    setEnabled(value);
+  };
   const handleSave = async () => {
     const id = toast('正在保存...', {
       autoClose: false,
     });
     await userStorage.set({
       syncSettings: syncSettings,
+      enabled: enabled,
     });
     toast.dismiss(id);
     toast.success('保存当前设置成功');
@@ -59,15 +65,26 @@ export default function Home() {
         <FormControlLabel
           control={
             <Switch
+              checked={enabled}
+              onChange={handleEnabled}
+              value={enabled}
+            />
+          }
+          label="是否啟用Matters消音器"
+        />
+      </FormGroup>
+      <FormGroup className={classes.formGroup}>
+        <FormControlLabel
+          control={
+            <Switch
               checked={syncSettings}
               onChange={handleSyncSettings}
               value={syncSettings}
             />
           }
-          label="自動在Chrome瀏覽器雲端同步該設置"
+          label="自動在Chrome瀏覽器雲端同步設置內容"
         />
       </FormGroup>
-
       <FormGroup row className={classes.buttonBox}>
         <Button
           onClick={handleSave}

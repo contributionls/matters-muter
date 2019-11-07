@@ -7,6 +7,16 @@ export function isBelongUsernames(username, usernames) {
     return false;
   }
 }
+
+export function isBelongKeywords(content, keywords) {
+  if (Array.isArray(keywords)) {
+    return keywords.some((keyword) => {
+      return content.includes(keyword.trim());
+    });
+  } else {
+    return false;
+  }
+}
 export function isMatchedUsername(u1, u2) {
   // ignore @
   if (u1 && u2) {

@@ -3,21 +3,26 @@ import { getCurrentPage } from '../../utils/page';
 import { initFilterComment } from '../../utils/comment';
 import debug from '../../utils/debug';
 const userStorage = new UserStorage();
-debug('init start');
 // 1. read config
 async function start() {
   const config = await userStorage.get();
-  // 2. get current page
-  const currentPage = getCurrentPage();
-  // 3. handle
-  switch (currentPage) {
-    case 'detail':
-      // if detail, handle comments list
-      initFilterComment(config);
+  // 1.1 check is enabled
+  if (config.enabled) {
+    debug('init start');
+    // 2. get current page
+    const currentPage = getCurrentPage();
+    // 3. handle
+    switch (currentPage) {
+      case 'detail':
+        // if detail, handle comments list
+        initFilterComment(config);
 
-      break;
-    default:
-      break;
+        break;
+      default:
+        break;
+    }
+  } else {
+    debug('matters multer has turned off.');
   }
 }
 

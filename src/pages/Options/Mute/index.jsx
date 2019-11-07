@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     width: 180,
   },
   formGroup: {
-    marginBottom: theme.spacing(4),
+    marginBottom: theme.spacing(5),
   },
   chipInput: {
     marginTop: theme.spacing(2),
@@ -57,21 +57,30 @@ const chipRenderer = (
 export default function Home() {
   const classes = useStyles();
   const [loading, setLoading] = React.useState(true);
+  const [isMutedByUsername, setIsMutedByUsername] = React.useState(true);
   const [chips, setChips] = React.useState([]);
+  const [mutedByKeywordEnabled, setMutedByKeywordEnabled] = React.useState(
+    true
+  );
+  const [mutedKeywords, setMutedKeywords] = React.useState([]);
   const [isMutedByDownVote, setIsMutedByDownVote] = React.useState(false);
   const [downVote, setDownVote] = React.useState(0);
-  const [isMutedByUsername, setIsMutedByUsername] = React.useState(true);
   const userStorage = new UserStorage();
   useEffect(() => {
     userStorage.get().then((config) => {
-      setChips(config.mutedUsers);
       setIsMutedByUsername(config.mutedByUsernameEnabled);
+      setChips(config.mutedUsers);
+      setMutedByKeywordEnabled(config.mutedByKeywordEnabled);
+      setMutedKeywords(config.mutedKeywords);
       setIsMutedByDownVote(config.mutedByDownVoteEnabled);
       setDownVote(config.downVote);
       setLoading(false);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  const handleIsMutedByUsername = (e, value) => {
+    setIsMutedByUsername(value);
+  };
   const handleAddChip = (value) => {
     // split by space
     const chipsSet = new Set(chips);
@@ -89,12 +98,30 @@ export default function Home() {
     chipsSet.delete(value);
     setChips(Array.from(chipsSet));
   };
+  const handleMutedByKeywordEnabled = (e, value) => {
+    setMutedByKeywordEnabled(value);
+  };
+  const handleAddKeyword = (value) => {
+    // split by space
+    const chipsSet = new Set(mutedKeywords);
+
+    value
+      .split(' ')
+      .filter((item) => item.trim())
+      .forEach((item) => {
+        chipsSet.add(item);
+      });
+    setMutedKeywords(Array.from(chipsSet));
+  };
+  const handleDeleteKeyword = (value) => {
+    const chipsSet = new Set(mutedKeywords);
+    chipsSet.delete(value);
+    setMutedKeywords(Array.from(chipsSet));
+  };
   const handleIsMutedByDownVote = (e, value) => {
     setIsMutedByDownVote(value);
   };
-  const handleIsMutedByUsername = (e, value) => {
-    setIsMutedByUsername(value);
-  };
+
   const handleDownVoteChange = (e) => {
     if (e.target.value === '') {
       setDownVote('');
@@ -110,10 +137,12 @@ export default function Home() {
       autoClose: false,
     });
     await userStorage.set({
-      mutedUsers: chips,
       mutedByUsernameEnabled: isMutedByUsername,
+      mutedUsers: chips,
       mutedByDownVoteEnabled: isMutedByDownVote,
       downVote: downVote,
+      mutedByKeywordEnabled: mutedByKeywordEnabled,
+      mutedKeywords: mutedKeywords,
     });
     toast.dismiss(id);
     toast.success('保存当前设置成功');
@@ -164,7 +193,7 @@ export default function Home() {
             fullWidth
             variant="outlined"
             label="靜音用戶名單"
-            helperText="空格分割可以輸入多個用戶,用戶名前面加不加@都可以，你也可以在用戶個人主頁找到按鈕添加到靜音名單里"
+            helperText="按回車鍵輸入，可以用空格分隔多個用戶,用戶名前面加不加@都可以，你也可以在用戶個人主頁找到靜音按鈕快捷添加到靜音名單"
             value={chips}
             onAdd={(chip) => handleAddChip(chip)}
             onDelete={(chip, index) => handleDeleteChip(chip, index)}
@@ -172,7 +201,31 @@ export default function Home() {
           />
         ) : null}
       </FormGroup>
-
+      <FormGroup className={classes.formGroup}>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={mutedByKeywordEnabled}
+              onChange={handleMutedByKeywordEnabled}
+              value={mutedByKeywordEnabled}
+            />
+          }
+          label="開啟根據關鍵詞來隱藏評論？"
+        />
+        {mutedByKeywordEnabled ? (
+          <ChipInput
+            className={classes.chipInput}
+            fullWidth
+            variant="outlined"
+            label="關鍵詞名單"
+            helperText="按回車鍵輸入，可以用空格分隔多個關鍵詞"
+            value={mutedKeywords}
+            onAdd={(chip) => handleAddKeyword(chip)}
+            onDelete={(chip, index) => handleDeleteKeyword(chip, index)}
+            chipRenderer={chipRenderer}
+          />
+        ) : null}
+      </FormGroup>
       <FormGroup row className={classes.buttonBox}>
         <Button
           onClick={handleSave}

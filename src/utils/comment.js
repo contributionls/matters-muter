@@ -1,8 +1,7 @@
 import debug from './debug';
 import $ from 'jquery';
 import log from './log';
-import _ from 'lodash';
-import { isBelongUsernames } from './common';
+import { isBelongUsernames, isBelongKeywords } from './common';
 import md5 from 'js-md5';
 const GLOBAL_COMMENTS_MAP = {};
 export function initFilterComment(opts) {
@@ -59,6 +58,10 @@ function addClickListenerBySection(section, opts) {
         }
       }
     }
+    if (e.target && e.target.className === 'matter-muter-why') {
+      // eslint-disable-next-line no-undef
+      window.open(chrome.extension.getURL('options.html#/about'));
+    }
   });
 }
 function delayFilterComment(opts) {
@@ -96,7 +99,7 @@ export function filterComments(opts) {
   debug('GLOBAL_COMMENTS_MAP', GLOBAL_COMMENTS_MAP);
 }
 export function getCommentReplacedHtml(opts) {
-  return `<p class="matter-muter-comment-placeholder" data-selector="${opts.contentSelector}" data-id="${opts.id}" style="padding-top:0.2rem;cursor: pointer;color:#b3b3b3;">${opts.reason}，點擊可查看原評論內容（為什麼？）</p>`;
+  return `<p class="matter-muter-comment-placeholder" data-selector="${opts.contentSelector}" data-id="${opts.id}" style="padding-top:0.2rem;cursor: pointer;color:#b3b3b3;">${opts.reason}，點擊可查看原評論內容（<span style="font-style:italic;" class="matter-muter-why">為什麼？</span>）</p>`;
 }
 
 export function getNeedMutedComments(opts) {
@@ -108,6 +111,7 @@ export function getNeedMutedComments(opts) {
   );
   const allComments = allFeatureComments.concat(allLatestComments);
   let matchedUsernameComments = [];
+  let matchedKeywordComments = [];
   let matchedDownVoteComments = [];
   if (opts.mutedByUsernameEnabled) {
     matchedUsernameComments = allComments
@@ -120,6 +124,22 @@ export function getNeedMutedComments(opts) {
       })
       .map((item) => {
         item.reason = '該評論作者被設置為靜音用戶，已折疊該評論';
+        item.mutedHandleFlag = true;
+        return item;
+      });
+  }
+  if (opts.mutedByKeywordEnabled) {
+    matchedKeywordComments = allComments
+      .filter((item) => {
+        return (
+          !item.mutedHandleFlag &&
+          !item.muted &&
+          !item.skip &&
+          isBelongKeywords(item.content, opts.mutedKeywords)
+        );
+      })
+      .map((item) => {
+        item.reason = '該評論匹配到關鍵詞靜音設置，已折疊該評論';
         item.mutedHandleFlag = true;
         return item;
       });
@@ -140,10 +160,13 @@ export function getNeedMutedComments(opts) {
         return item;
       });
   }
-  return matchedUsernameComments.concat(matchedDownVoteComments).map((item) => {
-    delete item.mutedHandleFlag;
-    return item;
-  });
+  return matchedUsernameComments
+    .concat(matchedKeywordComments)
+    .concat(matchedDownVoteComments)
+    .map((item) => {
+      delete item.mutedHandleFlag;
+      return item;
+    });
 }
 export function getAllCommentsSelectorsBySection(section) {
   let matchedSelectors = [];

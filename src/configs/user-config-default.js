@@ -1,5 +1,6 @@
 export default {
   version: 1,
+  enabled: true,
   mutedByUsernameEnabled: true,
   mutedUsers: [
     'xinzhongguo',
@@ -20,6 +21,8 @@ export default {
     'luobin1976',
     'vic',
   ],
+  mutedByKeywordEnabled: true,
+  mutedKeywords: ['不同意'],
   mutedByDownVoteEnabled: true,
   downVote: 10,
   syncSettings: true,
