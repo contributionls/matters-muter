@@ -11,4 +11,4 @@ The project use [debug](https://github.com/visionmedia/debug) library for debugi
 ## TODO
 
 - [ ] shortcut add to muted
-- [ ] muted by votes
+- [x] muted by votes

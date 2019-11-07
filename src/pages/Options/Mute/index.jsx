@@ -1,7 +1,36 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Chip from '@material-ui/core/Chip';
+import {
+  TextField,
+  FormGroup,
+  FormControlLabel,
+  Switch,
+  Button,
+} from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import ChipInput from 'material-ui-chip-input';
 import { plusAt } from '../../../utils/common';
+import { toast } from 'react-toastify';
+import UserStorage from '../../../configs/user-storage';
+import Loading from '../../../components/Loading';
+const useStyles = makeStyles((theme) => ({
+  container: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+  textField: {
+    width: 180,
+  },
+  formGroup: {
+    marginBottom: theme.spacing(4),
+  },
+  chipInput: {
+    marginTop: theme.spacing(2),
+  },
+  buttonBox: {
+    marginTop: theme.spacing(8),
+  },
+}));
 const chipRenderer = (
   { value, text, isDisabled, isReadOnly, handleClick, handleDelete, className },
   key
@@ -26,7 +55,23 @@ const chipRenderer = (
 };
 
 export default function Home() {
+  const classes = useStyles();
+  const [loading, setLoading] = React.useState(true);
   const [chips, setChips] = React.useState([]);
+  const [isMutedByDownVote, setIsMutedByDownVote] = React.useState(false);
+  const [downVote, setDownVote] = React.useState(0);
+  const [isMutedByUsername, setIsMutedByUsername] = React.useState(true);
+  const userStorage = new UserStorage();
+  useEffect(() => {
+    userStorage.get().then((config) => {
+      setChips(config.mutedUsers);
+      setIsMutedByUsername(config.mutedByUsernameEnabled);
+      setIsMutedByDownVote(config.mutedByDownVoteEnabled);
+      setDownVote(config.downVote);
+      setLoading(false);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const handleAddChip = (value) => {
     // split by space
     const chipsSet = new Set(chips);
@@ -37,7 +82,6 @@ export default function Home() {
       .forEach((item) => {
         chipsSet.add(item);
       });
-    console.log('xxx', Array.from(chipsSet));
     setChips(Array.from(chipsSet));
   };
   const handleDeleteChip = (value) => {
@@ -45,18 +89,100 @@ export default function Home() {
     chipsSet.delete(value);
     setChips(Array.from(chipsSet));
   };
+  const handleIsMutedByDownVote = (e, value) => {
+    setIsMutedByDownVote(value);
+  };
+  const handleIsMutedByUsername = (e, value) => {
+    setIsMutedByUsername(value);
+  };
+  const handleDownVoteChange = (e) => {
+    if (e.target.value === '') {
+      setDownVote('');
+      return;
+    }
+    const value = Number(e.target.value);
+    if (Number.isInteger(value)) {
+      setDownVote(Number(value));
+    }
+  };
+  const handleSave = async () => {
+    const id = toast('正在保存...', {
+      autoClose: false,
+    });
+    await userStorage.set({
+      mutedUsers: chips,
+      mutedByUsernameEnabled: isMutedByUsername,
+      mutedByDownVoteEnabled: isMutedByDownVote,
+      downVote: downVote,
+    });
+    toast.dismiss(id);
+    toast.success('保存当前设置成功');
+  };
+  if (loading) {
+    return <Loading></Loading>;
+  }
   return (
     <div>
-      <ChipInput
-        fullWidth
-        variant="outlined"
-        label="靜音用戶名單"
-        helperText="空格分割可以輸入多個用戶,用戶名前面加不加@都可以，你也可以在用戶個人主頁找到按鈕添加到靜音名單里"
-        value={chips}
-        onAdd={(chip) => handleAddChip(chip)}
-        onDelete={(chip, index) => handleDeleteChip(chip, index)}
-        chipRenderer={chipRenderer}
-      />
+      <FormGroup className={classes.formGroup}>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={isMutedByDownVote}
+              onChange={handleIsMutedByDownVote}
+              value={isMutedByDownVote}
+            />
+          }
+          label="開啟根據踩(👎)的数量來隱藏評論？"
+        />
+        {isMutedByDownVote ? (
+          <TextField
+            id="outlined-basic"
+            className={classes.textField}
+            label="當踩的数量多於"
+            type="number"
+            value={downVote}
+            margin="normal"
+            onChange={handleDownVoteChange}
+            variant="outlined"
+          />
+        ) : null}
+      </FormGroup>
+      <FormGroup className={classes.formGroup}>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={isMutedByUsername}
+              onChange={handleIsMutedByUsername}
+              value={isMutedByUsername}
+            />
+          }
+          label="開啟根據用戶名來隱藏評論？"
+        />
+        {isMutedByUsername ? (
+          <ChipInput
+            className={classes.chipInput}
+            fullWidth
+            variant="outlined"
+            label="靜音用戶名單"
+            helperText="空格分割可以輸入多個用戶,用戶名前面加不加@都可以，你也可以在用戶個人主頁找到按鈕添加到靜音名單里"
+            value={chips}
+            onAdd={(chip) => handleAddChip(chip)}
+            onDelete={(chip, index) => handleDeleteChip(chip, index)}
+            chipRenderer={chipRenderer}
+          />
+        ) : null}
+      </FormGroup>
+
+      <FormGroup row className={classes.buttonBox}>
+        <Button
+          onClick={handleSave}
+          size="large"
+          variant="outlined"
+          color="secondary"
+        >
+          保存設置
+        </Button>
+      </FormGroup>
     </div>
   );
 }

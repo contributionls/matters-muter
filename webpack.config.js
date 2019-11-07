@@ -52,7 +52,10 @@ var options = {
       {
         test: /\.css$/,
         loader: 'style-loader!css-loader',
-        exclude: /node_modules/,
+        include: [
+          path.resolve(__dirname, 'src'),
+          path.resolve(__dirname, 'node_modules/react-toastify'),
+        ],
       },
       {
         test: new RegExp('.(' + fileExtensions.join('|') + ')$'),

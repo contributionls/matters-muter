@@ -15,6 +15,8 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
 import Mute from './Mute';
+import General from './General';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -35,7 +37,8 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(5),
   },
   section: {
-    padding: theme.spacing(4),
+    paddingLeft: theme.spacing(4),
+    paddingRight: theme.spacing(4),
   },
 }));
 const defaultTheme = createMuiTheme({
@@ -99,7 +102,7 @@ export default function Home() {
             </Toolbar>
           </AppBar>
         </header>
-        <Grid className={classes.main} container spacing={3}>
+        <Grid className={classes.main} container spacing={6}>
           <Grid item xs={12} lg={2}>
             <Tabs
               orientation={isLessLg ? 'horizontal' : 'vertical'}
@@ -107,7 +110,8 @@ export default function Home() {
               onChange={handleTabChange}
               aria-label="simple tabs example"
             >
-              <Tab value="/" label="靜音帳戶設置" />
+              <Tab value="/" label="靜音設置" />
+              <Tab value="/general" label="通用設置" />
               <Tab value="/put" label="導入/導出" />
               <Tab value="/about" label="關於" />
             </Tabs>
@@ -119,6 +123,9 @@ export default function Home() {
                   <Switch>
                     <Route exact path="/">
                       <Mute />
+                    </Route>
+                    <Route path="/general">
+                      <General></General>
                     </Route>
                     <Route path="/about">
                       <About />

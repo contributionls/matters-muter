@@ -1,6 +1,12 @@
 {
   "name": "Matters-消音器",
-  "permissions": ["*://127.0.0.1/*", "*://matters.news/*", "activeTab", "tabs"],
+  "permissions": [
+    "*://127.0.0.1/*",
+    "*://matters.news/*",
+    "activeTab",
+    "tabs",
+    "storage"
+  ],
   "options_page": "options.html",
   "background": {
     "page": "background.html"
