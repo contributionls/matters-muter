@@ -3,42 +3,55 @@ import $ from 'jquery';
 import log from './log';
 import { isBelongUsernames, isBelongKeywords } from './common';
 import md5 from 'js-md5';
+import event from './event';
 const GLOBAL_COMMENTS_MAP = {};
+let needDestroyed = [];
 export function initFilterComment(opts) {
   opts = {
     mutedUsers: [],
     ...opts,
   };
-  // when init, handle the document
-  filterComments(opts);
-
+  debug('detail init');
+  event.on('unmount', function onUnmount() {
+    needDestroyed.forEach((func) => {
+      func && func();
+    });
+    //delete
+    needDestroyed = [];
+    event.off('unmount', onUnmount);
+  });
+  // when init, handle the document, first should detect is dom is loaded.
+  detectFilterComment('all', opts);
   // listen comments load-mmore button, when the load-more button clicked handle the document(for hidden the later elements)
-  $('button.more-button').click((e) => {
+  function onMoreButtonClicked(e) {
     delayFilterComment(opts);
+  }
+  $('body').on('click', 'button.more-button', onMoreButtonClicked);
+  needDestroyed.push(() => {
+    $('body').off('click', 'button.more-button', onMoreButtonClicked);
   });
 
-  addClickListenerBySection('#latest-responses', opts);
   addClickListenerBySection('#featured-comments', opts);
+  addClickListenerBySection('#latest-responses', opts);
 }
 function addClickListenerBySection(section, opts) {
   // listen page comments load-mmore button,when the load-more button clicked handle the document(for hidden the later elements)
-  $(`${section} > div > button`).click((e) => {
+  function onLoadMoreButtonClicked(e) {
     debug('load more button clicked');
     // loop check if load completed
-    isLoadCommentsCompleted(section)
-      .then(() => {
-        debug('load comments completed');
-        filterComments(opts);
-      })
-      .catch(() => {
-        debug('check loading comments fail');
-        // even fail, retry replace
-        filterComments(opts);
-      });
+    detectFilterComment(section, opts);
+  }
+  $('body').on('click', `${section} > div > button`, onLoadMoreButtonClicked);
+  needDestroyed.push(() => {
+    $('body').off(
+      'click',
+      `${section} > div > button`,
+      onLoadMoreButtonClicked
+    );
   });
 
   // listen show-hidden-button, when the button clicked, replace the origin html
-  $(section).click((e) => {
+  function onBodyClicked(e) {
     if (e.target && e.target.className === 'matter-muter-comment-placeholder') {
       if (
         e.target.dataset &&
@@ -60,9 +73,46 @@ function addClickListenerBySection(section, opts) {
     }
     if (e.target && e.target.className === 'matter-muter-why') {
       // eslint-disable-next-line no-undef
-      window.open(chrome.extension.getURL('options.html#/about'));
+      window.open(chrome.extension.getURL('options.html'));
     }
+  }
+  $('body').on('click', onBodyClicked);
+  needDestroyed.push(() => {
+    $('body').off('click', onBodyClicked);
   });
+}
+function detectFilterComment(section, opts) {
+  if (section === 'all') {
+    isLoadCommentsCompletedBySection('#latest-responses', 'init')
+      .then(() => {
+        debug('load comments completed');
+        filterComments(opts);
+      })
+      .catch((e) => {
+        debug('check loading comments fail %o', e);
+        // even fail, retry replace
+        // filterComments(opts);
+      });
+    isLoadCommentsCompletedBySection('#featured-comments', 'init')
+      .then(() => {
+        debug('load comments completed');
+        filterComments(opts);
+      })
+      .catch((e) => {
+        debug('check loading comments fail %o', e);
+      });
+  } else {
+    isLoadCommentsCompletedBySection(section)
+      .then(() => {
+        debug('load comments completed');
+        filterComments(opts);
+      })
+      .catch(() => {
+        debug('check loading comments fail');
+        // even fail, retry replace
+        filterComments(opts);
+      });
+  }
 }
 function delayFilterComment(opts) {
   setTimeout(() => {
@@ -219,7 +269,7 @@ export function getAllCommentsSelectorsBySection(section) {
       debug('comment,%s,end', rootIndex);
     });
   } else {
-    log.error('Can not find the comments element, the extension can not work');
+    debug('Can not find the comments element, the extension can not work');
   }
   // string handle
   matchedSelectors = matchedSelectors.map((item) => {
@@ -284,27 +334,35 @@ function getDataByCommentElement($commentsElement) {
   }
 }
 
-function isLoadCommentsCompleted(section) {
-  const retryTimes = 300;
+function isLoadCommentsCompletedBySection(section, stage) {
+  const retryTimes = 400;
   let sum = 0;
   const $startLatestComments = $(`${section} ul li`);
-
   return new Promise((resolve, reject) => {
     const checkIsCompleted = function() {
+      if (sum > retryTimes) {
+        return reject(new Error('check comments loading timeout'));
+      }
       sum++;
       const $currentLatestComments = $(`${section} ul li`);
-      if ($currentLatestComments.length > $startLatestComments.length) {
-        return resolve();
+      if (stage === 'init') {
+        if ($currentLatestComments.length > 0) {
+          return resolve();
+        } else {
+          setTimeout(() => {
+            checkIsCompleted();
+          }, 30);
+        }
       } else {
-        setTimeout(() => {
-          checkIsCompleted();
-        }, 30);
+        if ($currentLatestComments.length > $startLatestComments.length) {
+          return resolve();
+        } else {
+          setTimeout(() => {
+            checkIsCompleted();
+          }, 30);
+        }
       }
     };
-    if (sum > retryTimes) {
-      reject(new Error('check comments loading timeout'));
-    } else {
-      checkIsCompleted();
-    }
+    checkIsCompleted();
   });
 }

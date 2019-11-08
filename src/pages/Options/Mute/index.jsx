@@ -4,6 +4,7 @@ import {
   TextField,
   FormGroup,
   FormControlLabel,
+  FormHelperText,
   Switch,
   Button,
 } from '@material-ui/core';
@@ -65,6 +66,12 @@ export default function Home() {
   const [mutedKeywords, setMutedKeywords] = React.useState([]);
   const [isMutedByDownVote, setIsMutedByDownVote] = React.useState(false);
   const [downVote, setDownVote] = React.useState(0);
+
+  const [
+    profileMutedShortcutEnabled,
+    setProfileMutedShortcutEnabled,
+  ] = React.useState(true);
+
   const userStorage = new UserStorage();
   useEffect(() => {
     userStorage.get().then((config) => {
@@ -74,6 +81,7 @@ export default function Home() {
       setMutedKeywords(config.mutedKeywords);
       setIsMutedByDownVote(config.mutedByDownVoteEnabled);
       setDownVote(config.downVote);
+      setProfileMutedShortcutEnabled(config.profileMutedShortcutEnabled);
       setLoading(false);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -121,6 +129,9 @@ export default function Home() {
   const handleIsMutedByDownVote = (e, value) => {
     setIsMutedByDownVote(value);
   };
+  const handleProfileMutedShortcutEnabled = (e, value) => {
+    setProfileMutedShortcutEnabled(value);
+  };
 
   const handleDownVoteChange = (e) => {
     if (e.target.value === '') {
@@ -143,6 +154,7 @@ export default function Home() {
       downVote: downVote,
       mutedByKeywordEnabled: mutedByKeywordEnabled,
       mutedKeywords: mutedKeywords,
+      profileMutedShortcutEnabled,
     });
     toast.dismiss(id);
     toast.success('保存当前设置成功');
@@ -163,6 +175,7 @@ export default function Home() {
           }
           label="開啟根據踩(👎)的数量來隱藏評論？"
         />
+
         {isMutedByDownVote ? (
           <TextField
             id="outlined-basic"
@@ -193,7 +206,7 @@ export default function Home() {
             fullWidth
             variant="outlined"
             label="靜音用戶名單"
-            helperText="按回車鍵輸入，可以用空格分隔多個用戶,用戶名前面加不加@都可以，你也可以在用戶個人主頁找到靜音按鈕快捷添加到靜音名單"
+            helperText="按回車鍵輸入，可以用空格分隔多個用戶,用戶名前面加不加@都可以，你也可以在用戶個人主頁找到靜音按鈕快捷添加到靜音用戶名單"
             value={chips}
             onAdd={(chip) => handleAddChip(chip)}
             onDelete={(chip, index) => handleDeleteChip(chip, index)}
@@ -225,6 +238,22 @@ export default function Home() {
             chipRenderer={chipRenderer}
           />
         ) : null}
+      </FormGroup>
+
+      <FormGroup className={classes.formGroup}>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={profileMutedShortcutEnabled}
+              onChange={handleProfileMutedShortcutEnabled}
+              value={profileMutedShortcutEnabled}
+            />
+          }
+          label="在Matters的作者主页添加快捷静音按钮"
+        />
+        <FormHelperText variant="outlined">
+          开启后，你可以在作者主頁點擊【更多操作】的圖標，再點擊【全站靜音】,就可以快速將該作者全站拉黑了
+        </FormHelperText>
       </FormGroup>
       <FormGroup row className={classes.buttonBox}>
         <Button

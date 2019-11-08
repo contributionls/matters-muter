@@ -17,6 +17,7 @@ import Link from '@material-ui/core/Link';
 import Mute from './Mute';
 import General from './General';
 import Put from './Put';
+import About from './About';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -88,13 +89,22 @@ export default function Home() {
                 noWrap
                 className={classes.toolbarTitle}
               >
-                Matters消音器
-              </Typography>
-              <nav>
                 <Link
                   variant="button"
                   color="textPrimary"
-                  href="#"
+                  href="/options.html"
+                  className={classes.link}
+                >
+                  Matters消音器
+                </Link>
+              </Typography>
+              <nav>
+                <Link
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  variant="button"
+                  color="textPrimary"
+                  href="https://github.com/contributionls/matters-muter"
                   className={classes.link}
                 >
                   Github
@@ -142,13 +152,5 @@ export default function Home() {
         </Grid>
       </div>
     </ThemeProvider>
-  );
-}
-
-function About() {
-  return (
-    <div>
-      <h2>About</h2>
-    </div>
   );
 }

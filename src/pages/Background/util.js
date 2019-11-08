@@ -4,9 +4,8 @@ export function openOrFocusOptionsPage() {
   chrome.tabs.query({}, function(extensionTabs) {
     var found = false;
     for (var i = 0; i < extensionTabs.length; i++) {
-      if (optionsUrl === extensionTabs[i].url) {
+      if (extensionTabs[i].url.indexOf(optionsUrl) === 0) {
         found = true;
-        console.log('tab id: ' + extensionTabs[i].id);
         chrome.tabs.update(extensionTabs[i].id, { selected: true });
       }
     }

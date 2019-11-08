@@ -1,0 +1,112 @@
+.matters-muter-mute-button-span * {
+  display: inline-block;
+  vertical-align: middle;
+}
+.matters-muter-mute-button-text {
+  word-break: break-word;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+  visibility: visible;
+  pointer-events: auto;
+  list-style: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-align: center;
+  white-space: nowrap;
+  text-transform: none;
+  user-select: none;
+  border-collapse: inherit;
+  box-sizing: inherit;
+  background-repeat: no-repeat;
+  background-position: 50%;
+  background-size: cover;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1;
+  font-size: 0.875rem;
+  padding-left: 1rem;
+  display: inline-block;
+  vertical-align: middle;
+}
+.matters-muter-mute-button > ::before {
+  content: '';
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+}
+.matters-muter-mute-button {
+  word-break: break-word;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+  visibility: visible;
+  pointer-events: auto;
+  list-style: none;
+  border-collapse: inherit;
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+  outline: 0;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  line-height: 1.15;
+  border-radius: 0;
+  -webkit-appearance: none;
+  display: inline-flex;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  justify-content: center;
+  width: auto;
+  background: transparent;
+  cursor: pointer;
+  user-select: none;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  overflow: visible;
+  text-transform: none;
+  background-repeat: no-repeat;
+  background-position: 50%;
+  background-size: cover;
+  transition: all 0.2s ease-in-out;
+  font-size: 0.875rem;
+}
+.matters-muter-mute-li:hover {
+  background: rgb(246, 246, 246);
+}
+.matters-muter-mute-li {
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue',
+    'PingFang TC', 'Microsoft YaHei', 'Source Han Sans TC', 'Noto Sans CJK TC',
+    'WenQuanYi Micro Hei', sans-serif;
+  font-weight: 400;
+  word-break: break-word;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeSpeed;
+  visibility: visible;
+  line-height: inherit;
+  pointer-events: auto;
+  color: #333333;
+  list-style: none;
+  font-size: 0.875rem;
+  border-collapse: inherit;
+  box-sizing: inherit;
+  margin: 0;
+  border: 0;
+  background-repeat: no-repeat;
+  background-position: 50%;
+  background-size: cover;
+  position: relative;
+  display: block;
+  width: 100%;
+  text-align: left;
+  overflow: hidden;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}

@@ -1,26 +1,27 @@
 {
   "name": "Matters-消音器",
   "permissions": [
-    "*://127.0.0.1/*",
     "*://matters.news/*",
     "activeTab",
     "tabs",
-    "storage"
+    "storage",
+    "notifications"
   ],
   "options_page": "options.html",
   "background": {
-    "page": "background.html"
+    "scripts": ["background.bundle.js"]
   },
   "browser_action": {
-    "default_icon": "icon-34.png"
+    "default_icon": "icon-48.png"
   },
   "icons": {
     "128": "icon-128.png"
   },
   "content_scripts": [
     {
-      "matches": ["*://127.0.0.1/*", "*://matters.news/*"],
+      "matches": ["*://matters.news/*"],
       "js": ["contentScript.bundle.js"],
+      "css": ["content.styles.css"],
       "run_at": "document_idle"
     }
   ],
@@ -28,7 +29,7 @@
     "options.html",
     "content.styles.css",
     "icon-128.png",
-    "icon-34.png"
+    "icon-48.png"
   ],
   "manifest_version": 2,
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"

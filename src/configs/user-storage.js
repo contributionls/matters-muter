@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 import userDefaultConfig from './user-config-default';
-import debug from '../utils/debug';
 const SAVE_TIMEOUT = 1000;
 export default class UserStorage {
   constructor() {
@@ -19,7 +18,6 @@ export default class UserStorage {
   async loadSettings() {
     this.settings = await this.loadSettingsFromStorage();
     this.isInit = true;
-    console.log('settings', this.settings);
     return this.settings;
   }
   loadSettingsFromStorage() {

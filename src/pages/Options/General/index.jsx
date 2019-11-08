@@ -70,7 +70,7 @@ export default function Home() {
               value={enabled}
             />
           }
-          label="是否啟用Matters消音器"
+          label="啟用Matters消音器"
         />
       </FormGroup>
       <FormGroup className={classes.formGroup}>

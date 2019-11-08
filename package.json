@@ -1,6 +1,6 @@
 {
   "name": "matters-muter",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "A chrome extension for muting unfriendly accounts on matters",
   "license": "MIT",
   "repository": {
@@ -25,12 +25,14 @@
     "loglevel-message-prefix": "^3.0.0",
     "loglevel-plugin-prefix": "^0.8.4",
     "material-ui-chip-input": "^2.0.0-beta.1",
+    "mitt": "^1.2.0",
     "react": "^16.10.2",
     "react-ace": "^8.0.0",
     "react-dom": "^16.10.2",
     "react-hot-loader": "^4.12.14",
     "react-router-dom": "^5.1.2",
-    "react-toastify": "^5.4.0"
+    "react-toastify": "^5.4.0",
+    "route-parser": "^0.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.1.5",
