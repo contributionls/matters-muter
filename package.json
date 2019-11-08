@@ -1,6 +1,6 @@
 {
   "name": "matters-muter",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "A chrome extension for muting unfriendly accounts on matters",
   "license": "MIT",
   "repository": {
