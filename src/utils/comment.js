@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import debug from './debug';
 import $ from 'jquery';
 import log from './log';
@@ -126,27 +127,42 @@ export function filterComments(opts) {
   debug('options: %o', opts);
 
   // get all selectors that need to mute
-
-  const mutedComments = getNeedMutedComments(opts);
-  debug('all selectors that need to mute', mutedComments);
-  // replace with the specific html
-  mutedComments.forEach((mutedComment) => {
-    // write to global cache, for toggle show using
-    // check if it's raw html, only cache the real raw html
-    const $content = mutedComment.contentElement;
-    if ($content.length > 0) {
-      const contentHtmlRaw = $content.html();
-      const contentId = md5(contentHtmlRaw);
-      GLOBAL_COMMENTS_MAP[contentId] = contentHtmlRaw;
-      $content.html(
-        getCommentReplacedHtml({
-          id: contentId,
-          ...mutedComment,
-        })
-      );
-    }
-  });
-  debug('GLOBAL_COMMENTS_MAP', GLOBAL_COMMENTS_MAP);
+  try {
+    const mutedComments = getNeedMutedComments(opts);
+    debug('all selectors that need to mute', mutedComments);
+    // replace with the specific html
+    mutedComments.forEach((mutedComment) => {
+      // write to global cache, for toggle show using
+      // check if it's raw html, only cache the real raw html
+      const $content = mutedComment.contentElement;
+      if ($content.length > 0) {
+        const contentHtmlRaw = $content.html();
+        const contentId = md5(contentHtmlRaw);
+        GLOBAL_COMMENTS_MAP[contentId] = contentHtmlRaw;
+        $content.html(
+          getCommentReplacedHtml({
+            id: contentId,
+            ...mutedComment,
+          })
+        );
+      }
+    });
+    debug('GLOBAL_COMMENTS_MAP', GLOBAL_COMMENTS_MAP);
+  } catch (err) {
+    chrome.runtime.sendMessage(
+      {
+        type: 'analytics',
+        data: {
+          hitType: 'exception',
+          exDescription: err.message,
+          exFatal: false,
+        },
+      },
+      function(response) {
+        debug('response %o', response);
+      }
+    );
+  }
 }
 export function getCommentReplacedHtml(opts) {
   return `<p class="matter-muter-comment-placeholder" data-selector="${opts.contentSelector}" data-id="${opts.id}" style="padding-top:0.2rem;cursor: pointer;color:#b3b3b3;">${opts.reason}，點擊可查看原評論內容（<span style="font-style:italic;" class="matter-muter-why">為什麼？</span>）</p>`;
@@ -175,22 +191,56 @@ export function getNeedMutedComments(opts) {
       .map((item) => {
         item.reason = '該評論作者被設置為靜音用戶，已折疊該評論';
         item.mutedHandleFlag = true;
+        // analytics
+        chrome.runtime.sendMessage(
+          {
+            type: 'analytics',
+            data: {
+              hitType: 'event',
+              eventCategory: 'mute-comment',
+              eventAction: 'username',
+              eventLabel: item.username,
+            },
+          },
+          function(response) {
+            debug('response %o', response);
+          }
+        );
         return item;
       });
   }
   if (opts.mutedByKeywordEnabled) {
     matchedKeywordComments = allComments
       .filter((item) => {
+        item.matchedKeyword = isBelongKeywords(
+          item.content,
+          opts.mutedKeywords
+        );
         return (
           !item.mutedHandleFlag &&
           !item.muted &&
           !item.skip &&
-          isBelongKeywords(item.content, opts.mutedKeywords)
+          item.matchedKeyword
         );
       })
       .map((item) => {
         item.reason = '該評論匹配到關鍵詞靜音設置，已折疊該評論';
         item.mutedHandleFlag = true;
+        // analytics
+        chrome.runtime.sendMessage(
+          {
+            type: 'analytics',
+            data: {
+              hitType: 'event',
+              eventCategory: 'mute-comment',
+              eventAction: 'keyword',
+              eventLabel: item.matchedKeyword,
+            },
+          },
+          function(response) {
+            debug('response %o', response);
+          }
+        );
         return item;
       });
   }
@@ -207,6 +257,21 @@ export function getNeedMutedComments(opts) {
       .map((item) => {
         item.reason = `該評論被踩的數量多於${opts.downVote}個，已被折疊`;
         item.mutedHandleFlag = true;
+        // analytics
+        chrome.runtime.sendMessage(
+          {
+            type: 'analytics',
+            data: {
+              hitType: 'event',
+              eventCategory: 'mute-comment',
+              eventAction: 'downVote',
+              eventLabel: opts.downVote,
+            },
+          },
+          function(response) {
+            debug('response %o', response);
+          }
+        );
         return item;
       });
   }
@@ -215,6 +280,7 @@ export function getNeedMutedComments(opts) {
     .concat(matchedDownVoteComments)
     .map((item) => {
       delete item.mutedHandleFlag;
+      delete item.matchedKeyword;
       return item;
     });
 }

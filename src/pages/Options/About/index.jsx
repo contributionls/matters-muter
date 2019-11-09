@@ -43,7 +43,7 @@ export default function Put() {
           color="textSecondary"
           component="p"
         >
-          當前版本：V0.0.1
+          當前版本：V0.0.2
         </Typography>
       </Container>
       <div>

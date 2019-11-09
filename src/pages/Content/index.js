@@ -21,36 +21,23 @@ async function start() {
         init();
       }
     });
+
+    chrome.runtime.sendMessage(
+      {
+        type: 'analytics',
+        data: {
+          hitType: 'event',
+          eventCategory: 'run',
+          eventAction: 'start',
+          eventLabel: window.location.href,
+        },
+      },
+      function(response) {
+        debug('response %o', response);
+      }
+    );
+
     init();
-
-    // Standard Google Universal Analytics code
-    (function(i, s, o, g, r, a, m) {
-      i['GoogleAnalyticsObject'] = r;
-      // eslint-disable-next-line no-unused-expressions
-      (i[r] =
-        i[r] ||
-        function() {
-          (i[r].q = i[r].q || []).push(arguments);
-        }),
-        (i[r].l = 1 * new Date());
-      // eslint-disable-next-line no-unused-expressions
-      (a = s.createElement(o)), (m = s.getElementsByTagName(o)[0]);
-      a.async = 1;
-      a.src = g;
-      m.parentNode.insertBefore(a, m);
-    })(
-      window,
-      document,
-      'script',
-      'https://www.google-analytics.com/analytics.js',
-      'ga'
-    ); // Note: https protocol here
-
-    ga('create', 'UA-144863614-2', 'auto'); // Enter your GA identifier
-    ga('set', 'checkProtocolTask', function() {}); // Removes failing protocol check. @see: http://stackoverflow.com/a/22152353/1958200
-    ga('require', 'displayfeatures');
-    ga('send', 'pageview');
-    debug('pageview');
   } else {
     debug('matters multer has turned off.');
   }
@@ -76,6 +63,36 @@ async function start() {
         debug('do not need handle.');
         break;
     }
+    chrome.runtime.sendMessage(
+      {
+        type: 'analytics',
+        data: {
+          hitType: 'event',
+          eventCategory: 'run',
+          eventAction: 'init',
+          eventLabel: window.location.href,
+        },
+      },
+      function(response) {
+        debug('response %o', response);
+      }
+    );
+    setTimeout(() => {
+      chrome.runtime.sendMessage(
+        {
+          type: 'analytics',
+          data: {
+            hitType: 'pageview',
+            title: document.title,
+            location: window.location.href,
+            page: window.location.pathname,
+          },
+        },
+        function(response) {
+          debug('response %o', response);
+        }
+      );
+    }, 2500);
   }
 }
 

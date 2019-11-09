@@ -205,8 +205,8 @@ export default function Home() {
             className={classes.chipInput}
             fullWidth
             variant="outlined"
-            label="靜音用戶名單"
-            helperText="按回車鍵輸入，可以用空格分隔多個用戶,用戶名前面加不加@都可以，你也可以在用戶個人主頁找到靜音按鈕快捷添加到靜音用戶名單"
+            label="靜音用戶ID名單"
+            helperText="按回車鍵輸入，可以用空格分隔多個用戶ID,注意，這裏是用戶ID，而非用戶暱稱，ID前面加不加@都可以，你也可以在用戶個人主頁找到靜音按鈕快捷添加到靜音用戶名單"
             value={chips}
             onAdd={(chip) => handleAddChip(chip)}
             onDelete={(chip, index) => handleDeleteChip(chip, index)}

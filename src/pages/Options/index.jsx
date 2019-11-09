@@ -33,4 +33,4 @@ render(<Options />, window.document.querySelector('#app-container'));
 ga('create', 'UA-144863614-2', 'auto'); // Enter your GA identifier
 ga('set', 'checkProtocolTask', function() {}); // Removes failing protocol check. @see: http://stackoverflow.com/a/22152353/1958200
 ga('require', 'displayfeatures');
-ga('send', 'pageview'); // Specify the virtual path
+ga('send', 'pageview', '/options.html'); // Specify the virtual path

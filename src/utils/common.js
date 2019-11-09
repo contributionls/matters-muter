@@ -10,7 +10,7 @@ export function isBelongUsernames(username, usernames) {
 
 export function isBelongKeywords(content, keywords) {
   if (Array.isArray(keywords)) {
-    return keywords.some((keyword) => {
+    return keywords.find((keyword) => {
       return content.includes(keyword.trim());
     });
   } else {
