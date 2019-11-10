@@ -1,6 +1,8 @@
 /* eslint-disable no-undef */
-import userDefaultConfig from './user-config-default';
+import userDefaultConfig, { userConfigSchema } from './user-config-default';
+import Ajv from 'ajv';
 const SAVE_TIMEOUT = 1000;
+
 export default class UserStorage {
   constructor() {
     this.timeout = null;
@@ -28,6 +30,19 @@ export default class UserStorage {
           return;
         }
         chrome.storage.sync.get(this.defaultSettings, ($sync) => {
+          resolve($sync);
+        });
+      });
+    });
+  }
+  getPrivate(key) {
+    return new Promise((resolve) => {
+      chrome.storage.local.get(key, (local) => {
+        if (!local.syncSettings) {
+          resolve(local);
+          return;
+        }
+        chrome.storage.sync.get(key, ($sync) => {
           resolve($sync);
         });
       });
@@ -71,7 +86,30 @@ export default class UserStorage {
     if (!this.isInit) {
       await this.loadSettings();
     }
-    this.settings = Object.assign(Object.assign({}, this.settings), $settings);
-    await this.saveSettings();
+    // check schema
+    if (isValidConfig($settings)) {
+      const newSettings = Object.assign(
+        Object.assign({}, this.settings),
+        $settings
+      );
+      if (isValidConfig(newSettings)) {
+        this.settings = newSettings;
+        await this.saveSettings();
+      } else {
+        throw new Error('config invalid (2)');
+      }
+    } else {
+      throw new Error('config invalid');
+    }
   }
+  async setPrivate($settings) {
+    await this.saveSettingsIntoStorage($settings);
+  }
+}
+
+export function isValidConfig(config) {
+  var ajv = new Ajv(); // options can be passed, e.g. {allErrors: true}
+  var validate = ajv.compile(userConfigSchema);
+  var valid = validate(config);
+  return valid;
 }

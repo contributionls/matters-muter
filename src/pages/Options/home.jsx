@@ -14,6 +14,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
+import Subscription from './Subscription';
 import Mute from './Mute';
 import General from './General';
 import Put from './Put';
@@ -123,6 +124,7 @@ export default function Home() {
             >
               <Tab value="/" label="靜音設置" />
               <Tab value="/general" label="通用設置" />
+              <Tab value="/subscriptions" label="訂閱配置" />
               <Tab value="/put" label="導入/導出" />
               <Tab value="/about" label="關於" />
             </Tabs>
@@ -143,6 +145,9 @@ export default function Home() {
                     </Route>
                     <Route path="/put">
                       <Put />
+                    </Route>
+                    <Route path="/subscriptions">
+                      <Subscription />
                     </Route>
                   </Switch>
                 </Grid>

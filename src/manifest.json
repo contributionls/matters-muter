@@ -5,7 +5,10 @@
     "activeTab",
     "tabs",
     "storage",
-    "notifications"
+    "notifications",
+    "alarms",
+    "https://raw.githubusercontent.com/*",
+    "https://gist.githubusercontent.com/*"
   ],
   "options_page": "options.html",
   "background": {

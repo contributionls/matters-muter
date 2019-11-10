@@ -1,7 +1,9 @@
 /* eslint-disable no-undef */
 import '../../assets/img/icon-48.png';
 import '../../assets/img/icon-128.png';
+import 'whatwg-fetch';
 import { openOrFocusOptionsPage } from './util';
+import { updateConfigBySubscription } from '../../utils/config';
 chrome.browserAction.setPopup({ popup: '' }); //disable browserAction's popup
 // Standard Google Universal Analytics code
 (function(i, s, o, g, r, a, m) {
@@ -69,9 +71,33 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       chrome.notifications.clear('notificationName', function() {});
     }, 3000);
   }
+  if (request.type === 'updateConfig') {
+    updateConfigBySubscription()
+      .then(() => {
+        //success
+        sendResponse({ code: 'ok' });
+      })
+      .catch((e) => {
+        sendResponse({ code: 'fail', message: e.message });
+      });
+  }
   if (request.type === 'analytics') {
     ga('send', request.data);
+    sendResponse({ code: 'ok' });
   }
 
   return true;
+});
+chrome.alarms.onAlarm.addListener((alarm) => {
+  console.log('alarm', alarm);
+  if (alarm.name === 'updateConfigSubscriptions') {
+    // update config
+    updateConfigBySubscription();
+  }
+});
+
+// crontab auto update config
+chrome.alarms.create('updateConfigSubscriptions', {
+  when: Date.now() + 10000,
+  periodInMinutes: 10,
 });

@@ -8,7 +8,6 @@ This project build with [chrome-extension-boilerplate-react](https://github.com/
 
 You can see [here](https://matters.news/@deserve/%E4%BD%BF%E7%94%A8%E8%BF%99%E4%B8%AA%E6%B5%8F%E8%A7%88%E5%99%A8%E6%89%A9%E5%B1%95%E4%B8%80%E9%94%AE%E5%BC%80%E5%90%AFmatters%E7%9A%84%E5%85%A8%E7%AB%99%E5%B1%8F%E8%94%BD-%E6%8B%89%E9%BB%91-%E9%9D%99%E9%9F%B3%E5%8A%9F%E8%83%BD-zdpuAwGnxxMnyvaBJwCszuRrHjqprMohMPkXXWfYYKwEzvkrX)
 
-
 ## How to develop
 
 1. Run `yarn` to install the dependencies.
@@ -30,3 +29,5 @@ The project use [debug](https://github.com/visionmedia/debug) library for debugi
 - [x] muted by votes
 - [x] refresh without reload
 - [x] shortcut config add
+- [x] add subscrib feature
+- [ ] last update time

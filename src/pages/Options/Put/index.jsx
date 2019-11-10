@@ -70,7 +70,7 @@ export default function Put() {
     <div>
       <Typography
         className={classes.space}
-        variant="caption"
+        variant="body1"
         display="block"
         gutterBottom
       >
