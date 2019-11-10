@@ -1,6 +1,6 @@
 # Matters Muter
 
-A chrome extension for muting unfriendly accounts on matters
+A chrome/firefox extension for muting unfriendly accounts on matters
 
 This project build with [chrome-extension-boilerplate-react](https://github.com/lxieyang/chrome-extension-boilerplate-react)
 

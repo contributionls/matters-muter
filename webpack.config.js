@@ -89,6 +89,9 @@ var options = {
     }),
     // expose and write the allowed env vars on the compiled bundle
     new webpack.EnvironmentPlugin(['NODE_ENV']),
+    new webpack.DefinePlugin({
+      __CURRENT_VERSION__: JSON.stringify(process.env.npm_package_version),
+    }),
     new CopyWebpackPlugin(
       [
         {

@@ -58,7 +58,5 @@ export default {
   profileMutedShortcutEnabled: true, // enable author profile shortcut add muted user
   downVote: 15,
   syncSettings: true,
-  subscriptions: [
-    'https://raw.githubusercontent.com/contributionls/matters-muted-config/master/config.json',
-  ], // config subscriptions url
+  subscriptions: [], // config subscriptions url
 };

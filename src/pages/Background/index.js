@@ -1,10 +1,11 @@
 /* eslint-disable no-undef */
 import '../../assets/img/icon-48.png';
 import '../../assets/img/icon-128.png';
+import '../../utils/entry';
 import 'whatwg-fetch';
 import { openOrFocusOptionsPage } from './util';
 import { updateConfigBySubscription } from '../../utils/config';
-chrome.browserAction.setPopup({ popup: '' }); //disable browserAction's popup
+browser.browserAction.setPopup({ popup: '' }); //disable browserAction's popup
 // Standard Google Universal Analytics code
 (function(i, s, o, g, r, a, m) {
   i['GoogleAnalyticsObject'] = r;
@@ -31,31 +32,31 @@ ga('create', 'UA-144863614-2', 'auto'); // Enter your GA identifier
 ga('set', 'checkProtocolTask', function() {}); // Removes failing protocol check. @see: http://stackoverflow.com/a/22152353/1958200
 ga('require', 'displayfeatures');
 
-chrome.runtime.onInstalled.addListener(({ reason }) => {
+browser.runtime.onInstalled.addListener(({ reason }) => {
   if (reason === 'install') {
-    chrome.tabs.create({ url: 'options.html' });
+    browser.tabs.create({ url: 'options.html' });
   }
 });
 
 // Called when the user clicks on the browser action icon.
-chrome.browserAction.onClicked.addListener(function(tab) {
+browser.browserAction.onClicked.addListener(function(tab) {
   openOrFocusOptionsPage();
 });
 
-chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+browser.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   // read changeInfo data and do something with it
   // like send the new url to contentscripts.js
   if (changeInfo.url) {
-    chrome.tabs.sendMessage(tabId, {
+    browser.tabs.sendMessage(tabId, {
       type: 'urlChange',
       url: changeInfo.url,
     });
   }
 });
 
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.type === 'notice') {
-    chrome.notifications.create(
+    browser.notifications.create(
       'notificationName',
       {
         title: 'Matters消音器',
@@ -68,7 +69,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       }
     );
     setTimeout(function() {
-      chrome.notifications.clear('notificationName', function() {});
+      browser.notifications.clear('notificationName', function() {});
     }, 3000);
   }
   if (request.type === 'updateConfig') {
@@ -88,7 +89,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
   return true;
 });
-chrome.alarms.onAlarm.addListener((alarm) => {
+browser.alarms.onAlarm.addListener((alarm) => {
   console.log('alarm', alarm);
   if (alarm.name === 'updateConfigSubscriptions') {
     // update config
@@ -97,7 +98,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 });
 
 // crontab auto update config
-chrome.alarms.create('updateConfigSubscriptions', {
+browser.alarms.create('updateConfigSubscriptions', {
   when: Date.now() + 10000,
   periodInMinutes: 10,
 });

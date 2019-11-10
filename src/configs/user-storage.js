@@ -24,12 +24,12 @@ export default class UserStorage {
   }
   loadSettingsFromStorage() {
     return new Promise((resolve) => {
-      chrome.storage.local.get(this.defaultSettings, (local) => {
+      browser.storage.local.get(this.defaultSettings, (local) => {
         if (!local.syncSettings) {
           resolve(local);
           return;
         }
-        chrome.storage.sync.get(this.defaultSettings, ($sync) => {
+        browser.storage.sync.get(this.defaultSettings, ($sync) => {
           resolve($sync);
         });
       });
@@ -37,12 +37,12 @@ export default class UserStorage {
   }
   getPrivate(key) {
     return new Promise((resolve) => {
-      chrome.storage.local.get(key, (local) => {
+      browser.storage.local.get(key, (local) => {
         if (!local.syncSettings) {
           resolve(local);
           return;
         }
-        chrome.storage.sync.get(key, ($sync) => {
+        browser.storage.sync.get(key, ($sync) => {
           resolve($sync);
         });
       });
@@ -60,24 +60,24 @@ export default class UserStorage {
       this.timeout = setTimeout(() => {
         this.timeout = null;
         if (settings.syncSettings) {
-          chrome.storage.local.set({ syncSettings: true }, () => {
-            chrome.storage.sync.set(settings, () => {
-              if (chrome.runtime.lastError) {
+          browser.storage.local.set({ syncSettings: true }, () => {
+            browser.storage.sync.set(settings, () => {
+              if (browser.runtime.lastError) {
                 console.warn(
                   'Settings synchronization was disabled due to error:',
-                  chrome.runtime.lastError
+                  browser.runtime.lastError
                 );
                 const local = Object.assign(Object.assign({}, settings), {
                   syncSettings: false,
                 });
-                chrome.storage.local.set(local, () => resolve(local));
+                browser.storage.local.set(local, () => resolve(local));
               } else {
                 resolve(settings);
               }
             });
           });
         } else {
-          chrome.storage.local.set(settings, () => resolve(settings));
+          browser.storage.local.set(settings, () => resolve(settings));
         }
       }, SAVE_TIMEOUT);
     });

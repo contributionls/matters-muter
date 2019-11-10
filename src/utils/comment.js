@@ -74,7 +74,7 @@ function addClickListenerBySection(section, opts) {
     }
     if (e.target && e.target.className === 'matter-muter-why') {
       // eslint-disable-next-line no-undef
-      window.open(chrome.extension.getURL('options.html'));
+      window.open(browser.extension.getURL('options.html'));
     }
   }
   $('body').on('click', onBodyClicked);
@@ -149,7 +149,7 @@ export function filterComments(opts) {
     });
     debug('GLOBAL_COMMENTS_MAP', GLOBAL_COMMENTS_MAP);
   } catch (err) {
-    chrome.runtime.sendMessage(
+    browser.runtime.sendMessage(
       {
         type: 'analytics',
         data: {
@@ -192,7 +192,7 @@ export function getNeedMutedComments(opts) {
         item.reason = '該評論作者被設置為靜音用戶，已折疊該評論';
         item.mutedHandleFlag = true;
         // analytics
-        chrome.runtime.sendMessage(
+        browser.runtime.sendMessage(
           {
             type: 'analytics',
             data: {
@@ -227,7 +227,7 @@ export function getNeedMutedComments(opts) {
         item.reason = '該評論匹配到關鍵詞靜音設置，已折疊該評論';
         item.mutedHandleFlag = true;
         // analytics
-        chrome.runtime.sendMessage(
+        browser.runtime.sendMessage(
           {
             type: 'analytics',
             data: {
@@ -258,7 +258,7 @@ export function getNeedMutedComments(opts) {
         item.reason = `該評論被踩的數量多於${opts.downVote}個，已被折疊`;
         item.mutedHandleFlag = true;
         // analytics
-        chrome.runtime.sendMessage(
+        browser.runtime.sendMessage(
           {
             type: 'analytics',
             data: {

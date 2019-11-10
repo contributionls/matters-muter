@@ -91,7 +91,7 @@ export async function initAuthor(pageParams, userStorage) {
             //
             // notice
             // eslint-disable-next-line no-undef
-            chrome.runtime.sendMessage(
+            browser.runtime.sendMessage(
               {
                 type: 'notice',
                 data: {
@@ -113,7 +113,7 @@ export async function initAuthor(pageParams, userStorage) {
             // fail
             // notice
             // eslint-disable-next-line no-undef
-            chrome.runtime.sendMessage(
+            browser.runtime.sendMessage(
               {
                 type: 'notice',
                 data: {

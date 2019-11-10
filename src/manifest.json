@@ -10,7 +10,19 @@
     "https://raw.githubusercontent.com/*",
     "https://gist.githubusercontent.com/*"
   ],
-  "options_page": "options.html",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "matters-muter@matters.news"
+    },
+    "edge": {
+      "browser_action_next_to_addressbar": true
+    }
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+
   "background": {
     "scripts": ["background.bundle.js"]
   },

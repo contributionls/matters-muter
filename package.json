@@ -1,11 +1,11 @@
 {
   "name": "matters-muter",
-  "version": "0.0.3",
-  "description": "A chrome extension for muting unfriendly accounts on matters",
+  "version": "0.0.4",
+  "description": "A chrome/firefox extension for muting unfriendly accounts on matters",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lxieyang/chrome-extension-boilerplate-react.git"
+    "url": "https://github.com/contributionls/matters-muter.git"
   },
   "scripts": {
     "build": "node utils/build.js",

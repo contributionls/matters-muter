@@ -1,4 +1,5 @@
 /* eslint-disable no-undef */
+import '../../utils/entry';
 import UserStorage from '../../configs/user-storage';
 import { getCurrentPage } from '../../utils/page';
 import { initFilterComment } from '../../utils/comment';
@@ -13,7 +14,7 @@ async function start() {
   if (config.enabled) {
     debug('init start');
     // eslint-disable-next-line no-undef
-    chrome.runtime.onMessage.addListener(function(request) {
+    browser.runtime.onMessage.addListener(function(request) {
       // listen for messages sent from background.js
       if (request.type === 'urlChange') {
         // destroy all listener
@@ -22,7 +23,7 @@ async function start() {
       }
     });
 
-    chrome.runtime.sendMessage(
+    browser.runtime.sendMessage(
       {
         type: 'analytics',
         data: {
@@ -63,7 +64,7 @@ async function start() {
         debug('do not need handle.');
         break;
     }
-    chrome.runtime.sendMessage(
+    browser.runtime.sendMessage(
       {
         type: 'analytics',
         data: {
@@ -78,7 +79,7 @@ async function start() {
       }
     );
     setTimeout(() => {
-      chrome.runtime.sendMessage(
+      browser.runtime.sendMessage(
         {
           type: 'analytics',
           data: {

@@ -1,4 +1,5 @@
 /* eslint-disable no-undef */
+import '../../utils/entry';
 import React from 'react';
 import { render } from 'react-dom';
 

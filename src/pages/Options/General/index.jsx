@@ -82,7 +82,7 @@ export default function Home() {
               value={syncSettings}
             />
           }
-          label="自動在Chrome瀏覽器雲端同步設置內容"
+          label="自動在瀏覽器雲端同步設置內容"
         />
       </FormGroup>
       <FormGroup row className={classes.buttonBox}>

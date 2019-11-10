@@ -113,7 +113,7 @@ export default function Home() {
     });
     // update
     // eslint-disable-next-line no-undef
-    chrome.runtime.sendMessage(
+    browser.runtime.sendMessage(
       {
         type: 'updateConfig',
       },

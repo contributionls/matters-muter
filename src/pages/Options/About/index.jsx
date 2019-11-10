@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import React from 'react';
 import 'ace-builds/src-noconflict/mode-json';
 import 'ace-builds/src-noconflict/theme-github';
@@ -43,12 +44,12 @@ export default function Put() {
           color="textSecondary"
           component="p"
         >
-          當前版本：V0.0.3
+          當前版本：V{__CURRENT_VERSION__}
         </Typography>
       </Container>
       <div>
         <Typography className={classes.intro} variant="body1" gutterBottom>
-          Matters消音器是一款非官方的chrome擴展，源代碼開源，期待能藉此擴展提升Matters的閱讀體驗。
+          Matters消音器是一款非官方的chrome/firefox瀏覽器擴展，源代碼開源，期待能藉此擴展提升Matters的閱讀體驗。
         </Typography>
 
         <Typography className={classes.intro} variant="body1" gutterBottom>
