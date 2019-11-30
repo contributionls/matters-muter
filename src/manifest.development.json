@@ -1,0 +1,52 @@
+{
+  "name": "Matters-消音器",
+  "permissions": [
+    "*://matters.news/*",
+    "*://127.0.0.1/*",
+    "activeTab",
+    "tabs",
+    "storage",
+    "notifications",
+    "alarms",
+    "https://raw.githubusercontent.com/*",
+    "https://gist.githubusercontent.com/*"
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "matters-muter@matters.news"
+    },
+    "edge": {
+      "browser_action_next_to_addressbar": true
+    }
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+
+  "background": {
+    "scripts": ["background.bundle.js"]
+  },
+  "browser_action": {
+    "default_icon": "icon-48.png"
+  },
+  "icons": {
+    "128": "icon-128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://matters.news/*", "*://127.0.0.1/*"],
+      "js": ["contentScript.bundle.js"],
+      "css": ["content.styles.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    "options.html",
+    "content.styles.css",
+    "icon-128.png",
+    "icon-48.png"
+  ],
+  "manifest_version": 2,
+  "content_security_policy": "script-src 'self' https://www.google-analytics.com 'unsafe-eval'; object-src 'self'"
+}

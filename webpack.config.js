@@ -95,8 +95,12 @@ var options = {
     new CopyWebpackPlugin(
       [
         {
-          from: 'src/manifest.json',
-          to: path.join(__dirname, 'build'),
+          from:
+            env.NODE_ENV === 'development'
+              ? 'src/manifest.development.json'
+              : 'src/manifest.json',
+          to: path.join(__dirname, 'build', 'manifest.json'),
+          toType: 'file',
           force: true,
           transform: function(content, path) {
             // generates the manifest file using the package.json informations

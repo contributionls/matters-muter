@@ -288,15 +288,16 @@ export function getAllCommentsSelectorsBySection(section) {
   let matchedSelectors = [];
   // find the muted users comments' elements from latest comments
   const $latestMainComments = $(`${section} > ul > li`);
+  debug('$latestMainComments: %o', $latestMainComments);
   if ($latestMainComments && $latestMainComments.length > 0) {
     $latestMainComments.each((rootIndex, commentsElement) => {
       debug('comment,%s,start', rootIndex);
       const $commentsElement = $(commentsElement);
       // check comment type
       let contentType = '';
-      const $content = $(
-        `${section} > ul > li:nth-child(${rootIndex + 1}) > section > div`
-      );
+      let contentSelector = `${section} > ul > li:nth-child(${rootIndex +
+        1}) > section > div`;
+      const $content = $(contentSelector);
       if ($content.length > 0) {
         if ($content.hasClass('content-wrap')) {
           // comment type
@@ -312,6 +313,7 @@ export function getAllCommentsSelectorsBySection(section) {
         let selector = `${section} > ul > li:nth-child(${rootIndex +
           1}) > section`;
         const commentData = getDataByCommentElement($commentsElement);
+        debug('commentData: %o', commentData);
         commentData.selector = selector;
         matchedSelectors.push(commentData);
         // check if sencond comment is exist
@@ -346,14 +348,16 @@ export function getAllCommentsSelectorsBySection(section) {
   return matchedSelectors;
 }
 function getDataByCommentElement($commentsElement) {
+  // #featured-comments > ul > li:nth-child(3) > section > header > div > section > section > a > span > span.jsx-2608422601.username
   const $username = $commentsElement.find(
-    '> .container > header > div > section.author-row > section > a > span.username'
+    '> .container > header > div > section.author-row > section > a > span.name-container > span.username'
   );
-
+  debug('$username: %o', $username);
   if ($username && $username.length > 0) {
     const username = $username.text().trim();
     const $comment = $(
       $username
+        .parent()
         .parent()
         .parent()
         .parent()
@@ -365,10 +369,11 @@ function getDataByCommentElement($commentsElement) {
     const $content = $comment.find('> div > div');
     const content = $content.text();
     const $name = $comment.find(
-      '> header > div > section.author-row > section > a > span.name'
+      '> header > div > section.author-row > section > a > span.name-container > span.name'
     );
 
     const name = $name.text().trim();
+    // #Q29tbWVudDo3NTgwNw > div > footer > div > button:nth-child(1) > span > span
     const $upVote = $comment.find(
       '> div > footer > div > button:nth-child(1) > span > span'
     );
@@ -385,6 +390,10 @@ function getDataByCommentElement($commentsElement) {
     if ($muterPlaceHolder.length > 0) {
       muted = true;
     }
+    // if blocked by matters official
+    const isBlockedByOffcialSetting = $comment.find(
+      '> div > p.inactive-content'
+    ).length;
     const commentItem = {
       username: username,
       name,
@@ -394,9 +403,14 @@ function getDataByCommentElement($commentsElement) {
       contentElement: $content,
       content,
       muted,
-      skip: $content.hasClass('matters-muter-comment-skip'),
+      isBlockedByOffcialSetting,
+      skip:
+        isBlockedByOffcialSetting ||
+        $content.hasClass('matters-muter-comment-skip'),
     };
     return commentItem;
+  } else {
+    return {};
   }
 }
 

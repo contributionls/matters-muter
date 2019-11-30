@@ -38,6 +38,23 @@ async function start() {
       }
     );
 
+    // version
+
+    browser.runtime.sendMessage(
+      {
+        type: 'analytics',
+        data: {
+          hitType: 'event',
+          eventCategory: 'version',
+          eventAction: __CURRENT_VERSION__,
+          eventLabel: window.location.href,
+        },
+      },
+      function(response) {
+        debug('response %o', response);
+      }
+    );
+
     init();
   } else {
     debug('matters multer has turned off.');

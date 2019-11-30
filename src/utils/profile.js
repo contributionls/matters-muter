@@ -21,6 +21,7 @@ export async function initAuthor(pageParams, userStorage) {
         return;
       }
       debug('handle1 event triggerd');
+
       isLoadMoreCompletedBySection()
         .then(() => {
           debug('detect the dom show');
@@ -63,10 +64,24 @@ export async function initAuthor(pageParams, userStorage) {
         const data = { ...e.currentTarget.dataset };
         // click more button for closing the tooltips
         GLOBAL_TRIGGER_FLAG = true;
-        // #__next > main > section.jsx-195047847.container > div.jsx-195047847.content-container.l-row > section > section > section > header > section.jsx-195047847.buttons > span.u-sm-down-hide > button:nth-child(1)
-        $(
-          '#__next > main > section.container > div.content-container.l-row > section > section > section > header > section.buttons > span.u-sm-down-hide > button:nth-child(1)'
-        ).trigger('click');
+
+        const isDownHide = $('span.u-sm-down-hide').css('display') !== 'none';
+        const isUpHide = $('span.u-sm-up-hide').css('display') !== 'none';
+        // different media size has different element
+        if (isDownHide) {
+          $($('span.u-sm-down-hide')[1])
+            .find('> button:nth-child(1)')
+            .trigger('click');
+        }
+
+        if (isUpHide) {
+          $($('span.u-sm-up-hide')[0])
+            .find('> button:nth-child(1)')
+            .trigger('click');
+        }
+        // $(
+        //   '#__next > main > section.container > div.content-container.l-row > section > section > section > header > section.buttons > span.u-sm-down-hide > button:nth-child(1)'
+        // ).trigger('click');
 
         const users = new Set(config.mutedUsers);
         if (data.action === 'mute') {
