@@ -74,7 +74,7 @@ async function start() {
       case 'author':
         debug('detect author page.');
 
-        initAuthor(pageParams, userStorage);
+        initAuthor(pageParams, userStorage, true);
 
         break;
       default:

@@ -3,6 +3,8 @@ import UserStorage from '../configs/user-storage';
 import mergeDeep from 'deepmerge';
 import isPlainObj from 'is-plain-obj';
 import equal from 'deep-equal';
+import { isFirefox } from './common';
+
 export async function updateConfigBySubscription() {
   //
   const userStorage = new UserStorage();
@@ -37,12 +39,14 @@ export async function updateConfigBySubscription() {
         }
         // report
         // report
-        ga('send', {
-          hitType: 'event',
-          eventCategory: 'subscription-update',
-          eventAction: 'success',
-          eventLabel: isChanged ? 'changed' : 'notChanged',
-        });
+        if (!isFirefox()) {
+          ga('send', {
+            hitType: 'event',
+            eventCategory: 'subscription-update',
+            eventAction: 'success',
+            eventLabel: isChanged ? 'changed' : 'notChanged',
+          });
+        }
       } catch (error) {
         console.error('Update config failed', error);
         // fail
@@ -54,11 +58,13 @@ export async function updateConfigBySubscription() {
           },
         });
         // report
-        ga('send', {
-          hitType: 'exception',
-          exDescription: error.message,
-          exFatal: false,
-        });
+        if (!isFirefox()) {
+          ga('send', {
+            hitType: 'exception',
+            exDescription: error.message,
+            exFatal: false,
+          });
+        }
         throw error;
       }
     }

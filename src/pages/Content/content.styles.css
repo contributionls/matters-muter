@@ -75,10 +75,10 @@
   transition: all 0.2s ease-in-out;
   font-size: 0.875rem;
 }
-.matters-muter-mute-li:hover {
+.matters-muter-mute-section:hover {
   background: rgb(246, 246, 246);
 }
-.matters-muter-mute-li {
+.matters-muter-mute-section {
   font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue',
     'PingFang TC', 'Microsoft YaHei', 'Source Han Sans TC', 'Noto Sans CJK TC',
     'WenQuanYi Micro Hei', sans-serif;
@@ -92,7 +92,7 @@
   pointer-events: auto;
   color: #333333;
   list-style: none;
-  font-size: 0.875rem;
+  font-size: 1rem;
   border-collapse: inherit;
   box-sizing: inherit;
   margin: 0;
@@ -105,8 +105,8 @@
   width: 100%;
   text-align: left;
   overflow: hidden;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }

@@ -287,37 +287,65 @@ export function getNeedMutedComments(opts) {
 export function getAllCommentsSelectorsBySection(section) {
   let matchedSelectors = [];
   // find the muted users comments' elements from latest comments
-  const $latestMainComments = $(`${section} > ul > li`);
-  debug('$latestMainComments: %o', $latestMainComments);
+  // #latest-responses > section
+  const latestMainCommentsSelector = `${section} > section > section`;
+  const $latestMainComments = $(latestMainCommentsSelector);
+  debug(
+    '$latestMainComments: %s ,%o',
+    latestMainCommentsSelector,
+    $latestMainComments
+  );
   if ($latestMainComments && $latestMainComments.length > 0) {
     $latestMainComments.each((rootIndex, commentsElement) => {
       debug('comment,%s,start', rootIndex);
       const $commentsElement = $(commentsElement);
       // check comment type
       let contentType = '';
-      let contentSelector = `${section} > ul > li:nth-child(${rootIndex +
-        1}) > section > div`;
+      // #Q29tbWVudDoxMTA5MDI > section > section > p
+      let contentSelector = `${latestMainCommentsSelector}:nth-child(${rootIndex +
+        1}) > section > article > section`;
+
+      let sectionContainerSelector = `${latestMainCommentsSelector}:nth-child(${rootIndex +
+        1}) > section > section`;
+      const $sectionContainer = $(sectionContainerSelector);
+      debug(
+        'sectionContainerSelector %s %o',
+        sectionContainerSelector,
+        $sectionContainer
+      );
       const $content = $(contentSelector);
-      if ($content.length > 0) {
-        if ($content.hasClass('content-wrap')) {
-          // comment type
-          contentType = 'comment';
-        } else if ($content.hasClass('digest-wrap')) {
-          contentType = 'digest';
-        }
+      if ($content.length > 0 && $content.hasClass('content-container')) {
+        // comment type
+        contentType = 'comment';
+      } else if (
+        $sectionContainer.length > 0 &&
+        $sectionContainer.hasClass('article-digest')
+      ) {
+        //
+        contentType = 'digest';
       }
       debug('contentType', contentType);
 
       if (contentType === 'comment') {
         // cal selector
-        let selector = `${section} > ul > li:nth-child(${rootIndex +
+        // #featured-comments > section > section:nth-child(6) > section
+        let selector = `${latestMainCommentsSelector}:nth-child(${rootIndex +
           1}) > section`;
-        const commentData = getDataByCommentElement($commentsElement);
+        const commentData = getDataByCommentElement(
+          $commentsElement.find('> section')
+        );
         debug('commentData: %o', commentData);
         commentData.selector = selector;
         matchedSelectors.push(commentData);
         // check if sencond comment is exist
-        const $descendantComments = $(`${selector} > div > ul > li`);
+        // #latest-responses > section > section:nth-child(13) > section > ul > li
+        const descendantCommentsSelector = `${selector} > ul > li`;
+        const $descendantComments = $(descendantCommentsSelector);
+        debug(
+          'descendantCommentsSelector: %s %o',
+          descendantCommentsSelector,
+          $descendantComments
+        );
         // #featured-comments > ul > li:nth-child(2) > section > div > ul > li > section > div > div > p
         if ($descendantComments.length > 0) {
           // exist descendant comments
@@ -326,8 +354,7 @@ export function getAllCommentsSelectorsBySection(section) {
               $(descendantElement)
             );
             const descendantCommentSelector =
-              selector +
-              `> div > ul > li:nth-child(${descendantIndex + 1}) > section`;
+              selector + `> ul > li:nth-child(${descendantIndex + 1})`;
             descendantCommentData.selector = descendantCommentSelector;
             matchedSelectors.push(descendantCommentData);
           });
@@ -341,7 +368,7 @@ export function getAllCommentsSelectorsBySection(section) {
   }
   // string handle
   matchedSelectors = matchedSelectors.map((item) => {
-    item.contentSelector = item.selector + ` > div > div`;
+    item.contentSelector = item.selector + ` > article > section > section`;
     return item;
   });
   // find the muted users comments' elements from featured comments
@@ -349,8 +376,9 @@ export function getAllCommentsSelectorsBySection(section) {
 }
 function getDataByCommentElement($commentsElement) {
   // #featured-comments > ul > li:nth-child(3) > section > header > div > section > section > a > span > span.jsx-2608422601.username
+  // #featured-comments > section > section:nth-child(6) > section > article > header > a > section > span > span.jsx-4074194958.username
   const $username = $commentsElement.find(
-    '> .container > header > div > section.author-row > section > a > span.name-container > span.username'
+    '> article > header > a > section.container > span.name > span.username'
   );
   debug('$username: %o', $username);
   if ($username && $username.length > 0) {
@@ -362,26 +390,32 @@ function getDataByCommentElement($commentsElement) {
         .parent()
         .parent()
         .parent()
-        .parent()
-        .parent()
     );
     const commentElementId = $comment.attr('id');
-    const $content = $comment.find('> div > div');
+    const $content = $comment.find('> section > section');
     const content = $content.text();
+    // #Q29tbWVudDoxMTIzMzk > header > a > section > span > span.jsx-4074194958.displayname
     const $name = $comment.find(
-      '> header > div > section.author-row > section > a > span.name-container > span.name'
+      '> header > a > section > span > span.displayname'
     );
 
     const name = $name.text().trim();
     // #Q29tbWVudDo3NTgwNw > div > footer > div > button:nth-child(1) > span > span
-    const $upVote = $comment.find(
-      '> div > footer > div > button:nth-child(1) > span > span'
-    );
-    const $downVote = $comment.find(
-      '> div > footer > div > button:nth-child(3) > span > span'
-    );
-    const upVote = Number($upVote.text().trim());
-    const downVote = Number($downVote.text().trim());
+    // #featured-comments > section > section:nth-child(2) > section > article > section > footer > section > button:nth-child(2) > div > span > span
+    // #Q29tbWVudDoxMDcxMjc > section > footer
+    const $footer = $comment.find(`> section > footer`);
+    const footerAiraLabel = $footer.attr('aira-label');
+    const footerAiraLabelMatchResult = footerAiraLabel.match(/^(\d+).+(\d+).+/);
+    let upVote = 0;
+    let downVote = 0;
+    if (
+      footerAiraLabelMatchResult &&
+      footerAiraLabelMatchResult[1] &&
+      footerAiraLabelMatchResult[2]
+    ) {
+      upVote = Number(footerAiraLabelMatchResult[1]);
+      downVote = Number(footerAiraLabelMatchResult[2]);
+    }
 
     let muted = false;
     const $muterPlaceHolder = $content.find(
@@ -391,9 +425,8 @@ function getDataByCommentElement($commentsElement) {
       muted = true;
     }
     // if blocked by matters official
-    const isBlockedByOffcialSetting = $comment.find(
-      '> div > p.inactive-content'
-    ).length;
+    const isBlockedByOffcialSetting =
+      $content.find('> p.inactive-content').length > 0;
     const commentItem = {
       username: username,
       name,
