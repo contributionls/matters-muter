@@ -81,3 +81,24 @@ browser.alarms.create('updateConfigSubscriptions', {
   when: Date.now() + 10000,
   periodInMinutes: 30,
 });
+
+// listen the comment complete
+
+browser.webRequest.onCompleted.addListener(
+  (details) => {
+    console.log('details', details);
+    // get responses success
+    browser.tabs.sendMessage(details.tabId, {
+      type: 'commentsComplete',
+      url: details.url,
+    });
+  },
+  {
+    urls: [
+      'https://server.matters.news/graphql?operationName=ArticleResponse&*',
+      'https://server.matters.news/graphql?operationName=ArticleFeaturedComments&*',
+      'https://server.matters.news/graphql?operationName=LatestResponses&*',
+    ],
+    types: ['xmlhttprequest'],
+  }
+);

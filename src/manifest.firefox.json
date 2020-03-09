@@ -2,12 +2,11 @@
   "name": "Matters-消音器",
   "permissions": [
     "*://*.matters.news/*",
-    "*://127.0.0.1/*",
     "activeTab",
     "tabs",
     "storage",
-    "notifications",
     "webRequest",
+    "notifications",
     "alarms",
     "https://raw.githubusercontent.com/*",
     "https://gist.githubusercontent.com/*"
@@ -36,7 +35,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://matters.news/*", "*://127.0.0.1/*"],
+      "matches": ["*://matters.news/*"],
       "js": ["contentScript.bundle.js"],
       "css": ["content.styles.css"],
       "run_at": "document_idle"
@@ -49,5 +48,5 @@
     "icon-48.png"
   ],
   "manifest_version": 2,
-  "content_security_policy": "script-src 'self' https://www.google-analytics.com 'unsafe-eval'; object-src 'self'"
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }

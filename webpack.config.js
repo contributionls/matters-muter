@@ -91,13 +91,18 @@ var options = {
     new webpack.EnvironmentPlugin(['NODE_ENV']),
     new webpack.DefinePlugin({
       __CURRENT_VERSION__: JSON.stringify(process.env.npm_package_version),
+      __BUILD_TIME__: JSON.stringify(new Date()),
     }),
     new CopyWebpackPlugin(
       [
         {
           from:
             env.NODE_ENV === 'development'
-              ? 'src/manifest.development.json'
+              ? env.BROWSER === 'firefox'
+                ? 'src/manifest.firefox.development.json'
+                : 'src/manifest.development.json'
+              : env.BROWSER === 'firefox'
+              ? 'src/manifest.firefox.json'
               : 'src/manifest.json',
           to: path.join(__dirname, 'build', 'manifest.json'),
           toType: 'file',

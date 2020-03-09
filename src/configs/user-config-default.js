@@ -7,6 +7,9 @@ export const userConfigSchema = {
     enabled: {
       type: 'boolean',
     },
+    autoLoadCommentsAtLogoutEnabled: {
+      type: 'boolean',
+    },
     mutedByUsernameEnabled: {
       type: 'boolean',
     },
@@ -50,6 +53,7 @@ export const userConfigSchema = {
 export default {
   version: 1,
   enabled: true,
+  autoLoadCommentsAtLogoutEnabled: false,
   mutedByUsernameEnabled: true,
   mutedUsers: [],
   mutedByKeywordEnabled: true,

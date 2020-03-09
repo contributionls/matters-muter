@@ -49,5 +49,5 @@
     "icon-48.png"
   ],
   "manifest_version": 2,
-  "content_security_policy": "script-src 'self' https://www.google-analytics.com 'unsafe-eval'; object-src 'self'"
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }

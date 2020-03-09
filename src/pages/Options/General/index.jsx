@@ -28,12 +28,19 @@ export default function Home() {
   const [loading, setLoading] = React.useState(true);
   const [syncSettings, setSyncSettings] = React.useState(true);
   const [enabled, setEnabled] = React.useState(true);
+  const [
+    autoLoadCommentsAtLogoutEnabled,
+    setAutoLoadCommentsAtLogoutEnabled,
+  ] = React.useState(false);
 
   const userStorage = new UserStorage();
   useEffect(() => {
     userStorage.get().then((config) => {
       setSyncSettings(config.syncSettings);
       setEnabled(config.enabled);
+      setAutoLoadCommentsAtLogoutEnabled(
+        config.autoLoadCommentsAtLogoutEnabled
+      );
       setLoading(false);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -45,6 +52,9 @@ export default function Home() {
   const handleEnabled = (e, value) => {
     setEnabled(value);
   };
+  const handleAutoLoadCommentsAtLogoutEnabled = (e, value) => {
+    setAutoLoadCommentsAtLogoutEnabled(value);
+  };
   const handleSave = async () => {
     const id = toast('正在保存...', {
       autoClose: false,
@@ -52,6 +62,7 @@ export default function Home() {
     await userStorage.set({
       syncSettings: syncSettings,
       enabled: enabled,
+      autoLoadCommentsAtLogoutEnabled: autoLoadCommentsAtLogoutEnabled,
     });
     toast.dismiss(id);
     toast.success('保存当前设置成功');
@@ -83,6 +94,18 @@ export default function Home() {
             />
           }
           label="自動在瀏覽器雲端同步設置內容"
+        />
+      </FormGroup>
+      <FormGroup className={classes.formGroup}>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={autoLoadCommentsAtLogoutEnabled}
+              onChange={handleAutoLoadCommentsAtLogoutEnabled}
+              value={autoLoadCommentsAtLogoutEnabled}
+            />
+          }
+          label="啟用未登入時自動載入評論"
         />
       </FormGroup>
       <FormGroup row className={classes.buttonBox}>

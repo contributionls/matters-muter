@@ -5,6 +5,10 @@ import { isBelongUsernames } from './common';
 import event from './event';
 let isMuted;
 let config;
+let needDestroyed = [];
+event.on('unmount', function onUnmount() {
+  handleDestroy();
+});
 export async function initAuthor(pageParams, userStorage, isFirst) {
   debug('init author start', isFirst);
   const author = pageParams.author;
@@ -114,9 +118,22 @@ export async function initAuthor(pageParams, userStorage, isFirst) {
       debug('bind more action button');
       $('body').on('click', "button[aria-label='更多操作']", handler1);
       $('body').on('click', '.matters-muter-mute-button', handler2);
+      needDestroyed.push(() => {
+        $('body').off('click', "button[aria-label='更多操作']", handler1);
+      });
+      needDestroyed.push(() => {
+        $('body').off('click', '.matters-muter-mute-button', handler2);
+      });
     }
   });
 }
+function handleDestroy() {
+  needDestroyed.forEach((func) => {
+    func && func();
+  });
+  needDestroyed = [];
+}
+``;
 async function getData(username, userStorage) {
   const config = await userStorage.get();
   const { mutedUsers } = config;

@@ -1,10 +1,11 @@
 {
   "name": "Matters-消音器",
   "permissions": [
-    "*://matters.news/*",
+    "*://*.matters.news/*",
     "activeTab",
     "tabs",
     "storage",
+    "webRequest",
     "notifications",
     "alarms",
     "https://raw.githubusercontent.com/*",

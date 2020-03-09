@@ -6,50 +6,83 @@ import { isBelongUsernames, isBelongKeywords } from './common';
 import md5 from 'js-md5';
 import event from './event';
 const GLOBAL_COMMENTS_MAP = {};
+let GLOBAL_IS_CLOSE_UNLOGIN_OUTER = false;
+let GLOBAL_IS_DETECTING_OUTER = false;
 let needDestroyed = [];
+event.on('unmount', function onUnmount() {
+  needDestroyed.forEach((func) => {
+    func && func();
+  });
+  //delete
+  needDestroyed = [];
+});
+
 export function initFilterComment(opts) {
   opts = {
     mutedUsers: [],
     ...opts,
   };
   debug('detail init');
-  event.on('unmount', function onUnmount() {
-    needDestroyed.forEach((func) => {
-      func && func();
-    });
-    //delete
-    needDestroyed = [];
-    event.off('unmount', onUnmount);
-  });
+
   // when init, handle the document, first should detect is dom is loaded.
   detectFilterComment('all', opts);
   // listen comments load-mmore button, when the load-more button clicked handle the document(for hidden the later elements)
-  function onMoreButtonClicked(e) {
-    delayFilterComment(opts);
-  }
-  $('body').on('click', 'button.more-button', onMoreButtonClicked);
-  needDestroyed.push(() => {
-    $('body').off('click', 'button.more-button', onMoreButtonClicked);
-  });
 
   addClickListenerBySection('#featured-comments', opts);
   addClickListenerBySection('#latest-responses', opts);
 }
-function addClickListenerBySection(section, opts) {
-  // listen page comments load-mmore button,when the load-more button clicked handle the document(for hidden the later elements)
-  function onLoadMoreButtonClicked(e) {
-    debug('load more button clicked');
-    // loop check if load completed
-    detectFilterComment(section, opts);
+
+export function initHandleNoLoginOuter(opts) {
+  debug('init no login outer handler');
+  if (!GLOBAL_IS_CLOSE_UNLOGIN_OUTER && !GLOBAL_IS_DETECTING_OUTER) {
+    debug('listen scroll event');
+    $(window).scroll(function() {
+      if (
+        $(window).scrollTop() + $(window).height() >
+        $(document).height() - 300
+      ) {
+        detectOuter(opts);
+      }
+    });
   }
-  $('body').on('click', `${section} > div > button`, onLoadMoreButtonClicked);
+
+  detectOuter(opts);
+}
+function detectOuter(opts) {
+  if (!GLOBAL_IS_CLOSE_UNLOGIN_OUTER && !GLOBAL_IS_DETECTING_OUTER) {
+    debug('start detect outer');
+    GLOBAL_IS_DETECTING_OUTER = true;
+    isLoadNoLoginOuterCompleted()
+      .then(() => {
+        GLOBAL_IS_DETECTING_OUTER = false;
+        // click
+        const closeButtonSelector = `div.close > button`;
+        GLOBAL_IS_CLOSE_UNLOGIN_OUTER = true;
+        $(closeButtonSelector).click();
+        // if found
+      })
+      .catch((e) => {
+        debug('cannot found outer');
+        GLOBAL_IS_DETECTING_OUTER = false;
+      });
+  }
+}
+function addClickListenerBySection(section, opts) {
+  //   // #featured-comments > section > section:nth-child(5) > section > ul > button
+  const viewAllButtonSelector = `${section} > section > section >section > ul > button`;
+
+  $('body').on('click', viewAllButtonSelector, onViewMoreButtonClicked);
   needDestroyed.push(() => {
-    $('body').off(
-      'click',
-      `${section} > div > button`,
-      onLoadMoreButtonClicked
-    );
+    $('body').off('click', viewAllButtonSelector, onViewMoreButtonClicked);
   });
+
+  // listen page comments load-mmore button,when the load-more button clicked handle the document(for hidden the later elements)
+  function onViewMoreButtonClicked(e) {
+    debug('view more button clicked');
+    // loop check if load completed
+    delayFilterComment(opts);
+    section, opts;
+  }
 
   // listen show-hidden-button, when the button clicked, replace the origin html
   function onBodyClicked(e) {
@@ -450,14 +483,20 @@ function getDataByCommentElement($commentsElement) {
 function isLoadCommentsCompletedBySection(section, stage) {
   const retryTimes = 400;
   let sum = 0;
-  const $startLatestComments = $(`${section} ul li`);
+  const latestCommentSelector = `${section} > section > section`;
+  const $startLatestComments = $(latestCommentSelector);
+  debug(
+    'latestCommentSelector %s %o',
+    latestCommentSelector,
+    $startLatestComments
+  );
   return new Promise((resolve, reject) => {
     const checkIsCompleted = function() {
       if (sum > retryTimes) {
         return reject(new Error('check comments loading timeout'));
       }
       sum++;
-      const $currentLatestComments = $(`${section} ul li`);
+      const $currentLatestComments = $(latestCommentSelector);
       if (stage === 'init') {
         if ($currentLatestComments.length > 0) {
           return resolve();
@@ -474,6 +513,38 @@ function isLoadCommentsCompletedBySection(section, stage) {
             checkIsCompleted();
           }, 30);
         }
+      }
+    };
+    checkIsCompleted();
+  });
+}
+
+function isLoadNoLoginOuterCompleted() {
+  const retryTimes = 200;
+  let sum = 0;
+  // $('div.close > button').click()
+  const closeButtonSelector = `div.close > button`;
+  const signupButtonSelector = `div.signup`;
+
+  return new Promise((resolve, reject) => {
+    const checkIsCompleted = function() {
+      if (sum > retryTimes) {
+        return reject(
+          new Error('check isLoadNoLoginOuterCompleted loading timeout')
+        );
+      }
+      sum++;
+      const $closeButton = $(closeButtonSelector);
+      const $signupButton = $(signupButtonSelector);
+
+      // debug('closeButton %s %o', closeButtonSelector, $closeButton);
+
+      if ($closeButton.length > 0 && $signupButton.length > 0) {
+        return resolve();
+      } else {
+        setTimeout(() => {
+          checkIsCompleted();
+        }, 30);
       }
     };
     checkIsCompleted();

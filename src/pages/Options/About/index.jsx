@@ -44,7 +44,7 @@ export default function Put() {
           color="textSecondary"
           component="p"
         >
-          當前版本：V{__CURRENT_VERSION__}
+          當前版本：V{__CURRENT_VERSION__} (Build Time：{__BUILD_TIME__})
         </Typography>
       </Container>
       <div>
